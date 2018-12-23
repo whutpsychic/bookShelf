@@ -30,7 +30,6 @@
 
 * create-react-app
 * redux
-* bootstrap
 * sass
 * ?antd
 * ?dva
