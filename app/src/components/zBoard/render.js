@@ -1,6 +1,4 @@
-//
-//
-//上一次维护日期: 2018-12-23
+//上一次维护日期: 2018-12-24
 
 import React from "react";
 
@@ -10,20 +8,19 @@ export default class extends React.Component {
 		current: 1,
 		intervalKey: null,
 		isDragging: false,
-		startX: 0
+		startX: 0,
+		endX: 0
 	};
 
 	componentDidMount() {
-		const { children, defaultShow, autoScroll, scrollTime } = this.props;
+		const { children, defaultShow, scrollTime } = this.props;
 
 		this.setState({
 			Items: children || [],
 			current: defaultShow
 		});
 
-		if (autoScroll) {
-			this.scroll(scrollTime);
-		}
+		this.checkLoop();
 	}
 
 	componentWillUnmount() {
@@ -32,6 +29,7 @@ export default class extends React.Component {
 
 	render() {
 		const { Items, current } = this.state;
+		// const { startX, endX } = this.state;
 
 		const stylePosition = {
 			marginLeft: "-" + (current - 1) + "00%",
@@ -77,6 +75,9 @@ export default class extends React.Component {
 						onMouseDown={this.startDrag}
 						onMouseMove={this.dragging}
 						onMouseUp={this.endDrag}
+						onTouchStart={this.touchStartDrag}
+						onTouchMove={this.touchMove}
+						onTouchEnd={this.touchEndDrag}
 					>
 						{React.Children.map(Items, (child, i) => {
 							if (i < 1)
@@ -103,48 +104,94 @@ export default class extends React.Component {
 		);
 	}
 
-//************************************
+	//************************************
 	// 新增拖拽事件组
+	checkMove = (startx, endx) => {
+		if (endx - startx > 100) {
+			this.previousItem();
+		} else if (endx - startx < -100) {
+			this.nextItem();
+		}
+	};
 
+	//移动端
+	touchStartDrag = e => {
+		//如果是有多个触摸目标则不执行动作
+		if (e.targetTouches.length > 1) return;
+
+		const target = e.targetTouches[0];
+		this.setState({
+			isDragging: true,
+			startX: target.clientX
+		});
+	};
+
+	touchMove = e => {
+		const target = e.targetTouches[0];
+		const { isDragging } = this.state;
+		if (isDragging) {
+			this.setState({
+				endX: target.clientX
+			});
+		}
+	};
+
+	touchEndDrag = e => {
+		this.setState({
+			isDragging: false
+		});
+		this.checkMove(this.state.startX, this.state.endX);
+	};
+
+	//pc端
 	startDrag = e => {
 		e.preventDefault();
-		console.log(e.screenX);
-		console.log(e.screenY);
 		this.setState({
+			isDragging: true,
 			startX: e.screenX
 		});
 	};
 
 	dragging = e => {
-		// const { isDragging } = this.state;
-		// if (isDragging) {
-		// }
+		const { isDragging } = this.state;
+		if (isDragging) {
+			this.setState({
+				endX: e.clientX
+			});
+		}
 	};
 
 	endDrag = e => {
-		console.log(e.screenX);
-		console.log(e.screenY);
-		const { startX } = this.state;
-		if (startX - e.screenX > 100) {
-			this.nextItem();
+		this.setState({
+			isDragging: false
+		});
+		this.checkMove(this.state.startX, this.state.endX);
+	};
+	//************************************
+
+	//检查是否要循环轮播
+	checkLoop = () => {
+		const { autoScroll } = this.props;
+		if (autoScroll) {
+			const { intervalKey } = this.state;
+			if (intervalKey) window.clearTimeout(intervalKey);
+			const { scrollTime } = this.props;
+			let key = setTimeout(() => {
+				this.nextItem();
+			}, scrollTime);
+			this.setState({
+				intervalKey: key
+			});
 		}
 	};
-//************************************
 
-	//自动滚动动作
-	scroll = timeout => {
-		setInterval(() => {
-			this.nextItem();
-		}, timeout);
-	};
-
-	//上一项
+	//到上一项
 	previousItem = () => {
 		const { current } = this.state;
 		this.upToNum(current - 1);
 	};
 
-	//下一项
+	//到下一项
 	nextItem = () => {
 		const { current } = this.state;
 		this.upToNum(current + 1);
@@ -152,17 +199,13 @@ export default class extends React.Component {
 
 	//重置到第一项
 	upToFirst = () => {
-		this.setState({
-			current: 1
-		});
+		this.upToNum(1);
 	};
 
 	//到最后一项
 	upToEnd = () => {
 		const { Items } = this.state;
-		this.setState({
-			current: Items.length
-		});
+		this.upToNum(Items.length);
 	};
 
 	//跳转到第几项
@@ -181,6 +224,7 @@ export default class extends React.Component {
 				current: num
 			});
 		}
+		this.checkLoop();
 	};
 
 	//选第几个
