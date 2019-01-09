@@ -1,6 +1,15 @@
 import React from "react";
 
 import { Affix, Menu, Icon, Divider, Input } from "antd";
+// import 'antd/lib/affix/style/css'
+// import 'antd/lib/menu/style/css'
+// import 'antd/lib/icon/style/css'
+// import 'antd/lib/divider/style/css'
+// import 'antd/lib/input/style/css'
+
+
+
+
 import logo from "./img/antd-logo.svg";
 
 const SubMenu = Menu.SubMenu;

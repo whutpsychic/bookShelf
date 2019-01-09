@@ -4,26 +4,25 @@
   "private": true,
   "dependencies": {
     "antd": "^3.11.6",
+    "babel-polyfill": "^6.26.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "look": "node ./test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
   "devDependencies": {
-    "node-sass": "^4.11.0"
+    "babel-plugin-import": "^1.11.0",
+    "node-sass": "^4.11.0",
+    "react-app-rewired": "^2.0.1"
   }
 }
