@@ -7,9 +7,6 @@ import { Affix, Menu, Icon, Divider, Input } from "antd";
 // import 'antd/lib/divider/style/css'
 // import 'antd/lib/input/style/css'
 
-
-
-
 import logo from "./img/antd-logo.svg";
 
 const SubMenu = Menu.SubMenu;
@@ -83,7 +80,7 @@ export default class extends React.Component {
 		console.log(db);
 		const { db } = this.state;
 
-		const { topMenu = [], topMenuIcons=[] } = db;
+		const { topMenu = [], topMenuIcons = [] } = db;
 
 		return (
 			<div>
@@ -112,13 +109,30 @@ export default class extends React.Component {
 							>
 								{topMenu.map((item, i) => {
 									if (!item.children)
-										return <Menu.Item key={item.title}><Icon type={topMenuIcons[i]}/>{item.title}</Menu.Item>;
+										return (
+											<Menu.Item key={item.title}>
+												<Icon type={topMenuIcons[i]} />
+												{item.title}
+											</Menu.Item>
+										);
 									else {
 										return (
-											<SubMenu key={item.title} title={<span><Icon type={topMenuIcons[i]}/>{item.title}</span>}>
+											<SubMenu
+												key={item.title}
+												title={
+													<span>
+														<Icon type={topMenuIcons[i]} />
+														{item.title}
+													</span>
+												}
+											>
 												<MenuItemGroup>
 													{item.children.map((_item, _i) => {
-														return <Menu.Item key={_item.title}>{_item.title}</Menu.Item>;
+														return (
+															<Menu.Item key={_item.title}>
+																{_item.title}
+															</Menu.Item>
+														);
 													})}
 												</MenuItemGroup>
 											</SubMenu>
